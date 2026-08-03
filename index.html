@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BDSofware — Asistente inteligente para tu declaración de renta</title>
+<meta name="description" content="BDSofware: asistente de WhatsApp con inteligencia artificial para gestionar tu declaración de renta, en colaboración con tu contador.">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --bg-alt: #f6f7fb;
+    --text: #16181d;
+    --text-muted: #5a5f6b;
+    --border: rgba(20, 20, 30, 0.1);
+    --card-bg: #ffffff;
+    --card-shadow: 0 1px 2px rgba(16,24,40,0.04), 0 8px 24px rgba(16,24,40,0.06);
+    --brand-1: #5b5bf0;
+    --brand-2: #7a5bf0;
+    --brand-3: #23c4a8;
+    --pending-bg: #fff6da;
+    --pending-border: #e0c65c;
+    --pending-text: #6b5a10;
+    --nav-bg: rgba(255,255,255,0.75);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101216;
+      --bg-alt: #16181f;
+      --text: #eef0f4;
+      --text-muted: #a1a6b3;
+      --border: rgba(255,255,255,0.09);
+      --card-bg: #191b23;
+      --card-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+      --brand-1: #8b8bff;
+      --brand-2: #a98bff;
+      --brand-3: #35e0c0;
+      --pending-bg: #3a2f14;
+      --pending-border: #6b551f;
+      --pending-text: #f0d998;
+      --nav-bg: rgba(16,18,22,0.7);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem; }
+
+  .pending {
+    display: inline-block;
+    background: var(--pending-bg);
+    border: 1px solid var(--pending-border);
+    color: var(--pending-text);
+    border-radius: 4px;
+    padding: 0 0.4rem;
+    font-size: 0.82em;
+    white-space: nowrap;
+  }
+
+  /* Nav */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .brand-mark {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+  nav.links { display: flex; gap: 1.75rem; }
+  nav.links a {
+    text-decoration: none;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  nav.links a:hover { color: var(--text); }
+  .nav-cta {
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 760px) {
+    nav.links { display: none; }
+    .menu-toggle { display: block; }
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 5.5rem 0 5rem;
+    text-align: center;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 32rem;
+    background:
+      radial-gradient(60% 60% at 20% 20%, rgba(91,91,240,0.16), transparent 60%),
+      radial-gradient(50% 50% at 85% 10%, rgba(35,196,168,0.14), transparent 60%);
+    z-index: -1;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--brand-1);
+    background: color-mix(in srgb, var(--brand-1) 12%, transparent);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+  h1.headline {
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    margin: 0 0 1.1rem;
+  }
+  h1.headline .grad {
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subhead {
+    max-width: 620px;
+    margin: 0 auto 2.2rem;
+    font-size: 1.08rem;
+    color: var(--text-muted);
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 0.9rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 999px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    box-shadow: 0 6px 18px rgba(91,91,240,0.28);
+  }
+  .btn-ghost {
+    color: var(--text);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+  }
+
+  .trust-row {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .trust-row span { font-weight: 600; color: var(--text); }
+
+  /* Sections */
+  section { padding: 5rem 0; }
+  .section-head { max-width: 620px; margin: 0 auto 3rem; text-align: center; }
+  .section-head .eyebrow { margin-bottom: 1rem; }
+  .section-head h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 0.75rem;
+  }
+  .section-head p { color: var(--text-muted); margin: 0; }
+
+  .alt { background: var(--bg-alt); }
+
+  /* Cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.25rem;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    border-radius: 16px;
+    padding: 1.6rem;
+  }
+  .card .icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--brand-1) 18%, transparent), color-mix(in srgb, var(--brand-3) 18%, transparent));
+  }
+  .card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+  .card p { margin: 0; color: var(--text-muted); font-size: 0.92rem; }
+
+  /* Steps */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    counter-reset: step;
+  }
+  .step {
+    position: relative;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .step .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  .step h3 { margin: 0 0 0.4rem; font-size: 1rem; }
+  .step p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+
+  /* About / stats */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (max-width: 760px) {
+    .about-grid { grid-template-columns: 1fr; }
+  }
+  .about-grid h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.02em; margin-top: 0; }
+  .about-grid p { color: var(--text-muted); }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .stat {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.4rem;
+    text-align: center;
+  }
+  .stat .num { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .stat .label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+  /* CTA band */
+  .cta-band {
+    border-radius: 24px;
+    margin: 0 auto;
+    max-width: 1080px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    color: #fff;
+  }
+  .cta-band h2 { margin: 0 0 0.75rem; font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.02em; }
+  .cta-band p { margin: 0 0 1.75rem; opacity: 0.92; }
+  .cta-band .btn-ghost {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+  }
+  .cta-band .btn-primary {
+    background: #fff;
+    color: var(--brand-1);
+    box-shadow: none;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 0 2rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 760px) {
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+  footer h4 { color: var(--text); font-size: 0.85rem; margin: 0 0 0.9rem; }
+  footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--text); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Floating WhatsApp button */
+  .whatsapp-float {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 22px rgba(37,211,102,0.4);
+    transition: transform 0.15s ease, width 0.2s ease, border-radius 0.2s ease;
+  }
+  .whatsapp-float:hover {
+    transform: translateY(-2px);
+  }
+  @media (min-width: 600px) {
+    .whatsapp-float {
+      width: auto;
+      padding: 0 1.3rem 0 1rem;
+      border-radius: 999px;
+    }
+    .whatsapp-float .wa-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+  }
+  @media (max-width: 599px) {
+    .whatsapp-float .wa-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">BD</span>
+      BDSofware
+    </a>
+    <nav class="links">
+      <a href="#servicios">Servicios</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a class="nav-cta" href="https://wa.me/573213210699?text=Hola%20BDSofware%2C%20quiero%20informaci%C3%B3n%20sobre%20mi%20declaraci%C3%B3n%20de%20renta" target="_blank" rel="noopener">Hablar con el asistente</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow">🇨🇴 Declaración de renta, simplificada</span>
+      <h1 class="headline">Tu declaración de renta,<br><span class="grad">gestionada por WhatsApp</span></h1>
+      <p class="subhead">
+        BDSofware conecta un asistente de inteligencia artificial con tu contador de confianza,
+        para que reunir y enviar tus documentos sea tan fácil como escribir un mensaje.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://wa.me/573213210699?text=Hola%20BDSofware%2C%20quiero%20informaci%C3%B3n%20sobre%20mi%20declaraci%C3%B3n%20de%20renta" target="_blank" rel="noopener">Comenzar por WhatsApp</a>
+        <a class="btn btn-ghost" href="#como-funciona">Ver cómo funciona</a>
+      </div>
+      <div class="trust-row">
+        <div><span class="pending">clientes atendidos: dato pendiente</span></div>
+        <div><span class="pending">declaraciones procesadas: dato pendiente</span></div>
+        <div><span class="pending">calificación de servicio: dato pendiente</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicios" class="alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Servicios</span>
+        <h2>Todo lo que necesitas en un solo lugar</h2>
+        <p>Desde la recolección de documentos hasta el acompañamiento de tu contador.</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">💬</div>
+          <h3>Asistente por WhatsApp</h3>
+          <p>Resuelve dudas y recibe indicaciones paso a paso a través de un asistente con inteligencia artificial, disponible cuando lo necesites.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📎</div>
+          <h3>Recolección de documentos</h3>
+          <p>Envía certificados de ingresos, facturas y extractos bancarios directamente por chat; nosotros los organizamos por ti.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🧾</div>
+          <h3>Declaración de renta (DIAN)</h3>
+          <p>Tus documentos se integran a la plataforma DeclaracionDian, donde un contador asignado revisa y prepara tu declaración.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🔒</div>
+          <h3>Manejo responsable de datos</h3>
+          <p>Tratamos tu información conforme a la Ley 1581 de 2012. Consulta el detalle en nuestra <a href="privacidad.html">política de privacidad</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Proceso</span>
+        <h2>Cómo funciona</h2>
+        <p>Cuatro pasos entre escribirnos y tener tu declaración lista.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>Escríbenos por WhatsApp</h3>
+          <p>Inicia la conversación al <a href="https://wa.me/573213210699" target="_blank" rel="noopener"><strong>+57 321 321 0699</strong></a> y cuéntanos que necesitas declarar renta.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>Envía tus documentos</h3>
+          <p>El asistente te indica qué documentos necesita y los recibe directamente por chat.</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>Revisión de tu contador</h3>
+          <p>Un contador asignado dentro de DeclaracionDian valida la información y prepara tu declaración.</p>
+        </div>
+        <div class="step">
+          <div class="num">4</div>
+          <h3>Confirmación y radicado</h3>
+          <p>Recibes la confirmación de tu declaración y el soporte correspondiente ante la DIAN.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nosotros" class="alt">
+    <div class="container about-grid">
+      <div>
+        <span class="eyebrow">Nosotros</span>
+        <h2>Sofware libre, el portafolio detrás de BDSofware</h2>
+        <p>
+          BDSofware es el servicio de asistencia para declaración de renta dentro del portafolio comercial
+          "Sofware libre". Combinamos inteligencia artificial con el criterio de contadores reales, para que
+          declarar renta sea simple, rápido y sin papeleo innecesario.
+        </p>
+        <p><span class="pending">historia y equipo: contenido pendiente de confirmar</span></p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="num pending">— </div>
+          <div class="label">años de experiencia</div>
+        </div>
+        <div class="stat">
+          <div class="num pending">— </div>
+          <div class="label">contadores aliados</div>
+        </div>
+        <div class="stat">
+          <div class="num pending">— </div>
+          <div class="label">declaraciones al año</div>
+        </div>
+        <div class="stat">
+          <div class="num pending">— </div>
+          <div class="label">tiempo promedio de respuesta</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Empieza tu declaración de renta hoy</h2>
+        <p>Escríbenos por WhatsApp y un asistente te guiará en los primeros pasos.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" style="background:#fff; color: var(--brand-1);" href="https://wa.me/573213210699?text=Hola%20BDSofware%2C%20quiero%20informaci%C3%B3n%20sobre%20mi%20declaraci%C3%B3n%20de%20renta" target="_blank" rel="noopener">💬 Escribir al +57 321 321 0699</a>
+          <a class="btn btn-ghost" href="privacidad.html">Ver política de privacidad</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="#top">
+          <span class="brand-mark">BD</span>
+          BDSofware
+        </a>
+        <p style="margin-top:0.9rem; max-width: 320px;">
+          Asistente de WhatsApp con inteligencia artificial para la gestión de tu declaración de renta,
+          parte del portafolio "Sofware libre".
+        </p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#nosotros">Nosotros</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal y contacto</h4>
+        <ul>
+          <li><a href="privacidad.html">Política de privacidad</a></li>
+          <li><span class="pending">correo de contacto pendiente de confirmar</span></li>
+          <li><a href="https://wa.me/573213210699" target="_blank" rel="noopener">WhatsApp: +57 321 321 0699</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BDSofware — Sofware libre. Todos los derechos reservados.</span>
+      <span><a href="privacidad.html">Privacidad</a></span>
+    </div>
+  </div>
+</footer>
+
+<a class="whatsapp-float" href="https://wa.me/573213210699?text=Hola%20BDSofware%2C%20quiero%20informaci%C3%B3n%20sobre%20mi%20declaraci%C3%B3n%20de%20renta" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span aria-hidden="true">💬</span>
+  <span class="wa-label">WhatsApp</span>
+</a>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        var id = link.getAttribute('href').slice(1);
+        var el = document.getElementById(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

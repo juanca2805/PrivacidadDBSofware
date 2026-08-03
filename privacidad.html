@@ -4,109 +4,397 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Política de Privacidad — BDSofware</title>
+<meta name="description" content="Política de privacidad de BDSofware: cómo recolectamos, usamos y protegemos tus datos en el asistente de WhatsApp.">
 <style>
-  :root { color-scheme: light dark; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    max-width: 760px;
-    margin: 2.5rem auto;
-    padding: 0 1.25rem;
-    line-height: 1.6;
-    color: #1a1a1a;
-    background: #ffffff;
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --bg-alt: #f6f7fb;
+    --text: #16181d;
+    --text-muted: #5a5f6b;
+    --border: rgba(20, 20, 30, 0.1);
+    --card-bg: #ffffff;
+    --card-shadow: 0 1px 2px rgba(16,24,40,0.04), 0 8px 24px rgba(16,24,40,0.06);
+    --brand-1: #5b5bf0;
+    --brand-2: #7a5bf0;
+    --brand-3: #23c4a8;
+    --pending-bg: #fff6da;
+    --pending-border: #e0c65c;
+    --pending-text: #6b5a10;
+    --nav-bg: rgba(255,255,255,0.75);
   }
   @media (prefers-color-scheme: dark) {
-    body { color: #e6e6e6; background: #14161a; }
-    a { color: #7db7ff; }
-    .pending { background: #3a2f14; border-color: #6b551f; color: #f0d998; }
+    :root {
+      --bg: #101216;
+      --bg-alt: #16181f;
+      --text: #eef0f4;
+      --text-muted: #a1a6b3;
+      --border: rgba(255,255,255,0.09);
+      --card-bg: #191b23;
+      --card-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+      --brand-1: #8b8bff;
+      --brand-2: #a98bff;
+      --brand-3: #35e0c0;
+      --pending-bg: #3a2f14;
+      --pending-border: #6b551f;
+      --pending-text: #f0d998;
+      --nav-bg: rgba(16,18,22,0.7);
+    }
   }
-  h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
-  h2 { font-size: 1.15rem; margin-top: 2rem; border-bottom: 1px solid rgba(128,128,128,0.3); padding-bottom: 0.3rem; }
-  .updated { color: #767676; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--brand-1); }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem; }
+
   .pending {
     display: inline-block;
-    background: #fff6da;
-    border: 1px solid #e0c65c;
-    color: #6b5a10;
+    background: var(--pending-bg);
+    border: 1px solid var(--pending-border);
+    color: var(--pending-text);
     border-radius: 4px;
-    padding: 0 0.35rem;
-    font-size: 0.85em;
+    padding: 0 0.4rem;
+    font-size: 0.82em;
   }
-  ul { padding-left: 1.4rem; }
+
+  /* Nav (shared with index.html) */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .brand-mark {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+  .nav-cta {
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* Header banner */
+  .doc-hero {
+    padding: 3.5rem 0 2.5rem;
+    text-align: center;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--brand-1);
+    background: color-mix(in srgb, var(--brand-1) 12%, transparent);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    margin-bottom: 1.25rem;
+  }
+  .doc-hero h1 {
+    font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 0.6rem;
+  }
+  .updated { color: var(--text-muted); font-size: 0.92rem; margin: 0; }
+
+  /* Content */
+  .doc {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+  .doc > p.intro {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    border-radius: 16px;
+    padding: 1.5rem 1.6rem;
+    margin: 0 0 2.5rem;
+  }
+  .doc section {
+    padding: 0;
+    margin-bottom: 2.75rem;
+  }
+  .doc section:last-child { margin-bottom: 0; }
+  .doc h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 1rem;
+  }
+  .doc h2 .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    flex: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .doc p { color: var(--text-muted); margin: 0 0 0.9rem; }
+  .doc p:last-child { margin-bottom: 0; }
+  .doc ul {
+    padding-left: 0;
+    margin: 0 0 0.9rem;
+    list-style: none;
+  }
+  .doc ul li {
+    position: relative;
+    padding-left: 1.4rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+  .doc ul li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-3);
+  }
+  .doc strong { color: var(--text); }
+
+  .contact-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    border-radius: 16px;
+    padding: 1.5rem 1.6rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Footer (shared with index.html) */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 0 2rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* Floating WhatsApp button */
+  .whatsapp-float {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 22px rgba(37,211,102,0.4);
+    transition: transform 0.15s ease, width 0.2s ease, border-radius 0.2s ease;
+  }
+  .whatsapp-float:hover {
+    transform: translateY(-2px);
+  }
+  @media (min-width: 600px) {
+    .whatsapp-float {
+      width: auto;
+      padding: 0 1.3rem 0 1rem;
+      border-radius: 999px;
+    }
+    .whatsapp-float .wa-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+  }
+  @media (max-width: 599px) {
+    .whatsapp-float .wa-label { display: none; }
+  }
 </style>
 </head>
 <body>
 
-<h1>Política de Privacidad — BDSofware</h1>
-<p class="updated">Última actualización: 3 de agosto de 2026</p>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">BD</span>
+      BDSofware
+    </a>
+    <a class="nav-cta" href="index.html">Volver al inicio</a>
+  </div>
+</header>
 
-<p>
-  <strong>BDSofware</strong> (portafolio comercial "Sofware libre"), es el responsable del tratamiento
-  de los datos personales recolectados a través del servicio de asistente de WhatsApp asociado a esta
-  aplicación ("el Servicio").
-</p>
-<p>Contacto: <span class="pending">correo de contacto pendiente de confirmar</span></p>
+<div class="doc-hero">
+  <div class="container">
+    <span class="eyebrow">Legal</span>
+    <h1>Política de Privacidad</h1>
+    <p class="updated">Última actualización: 3 de agosto de 2026</p>
+  </div>
+</div>
 
-<h2>1. Datos que recolectamos</h2>
-<p>Cuando escribes al número de WhatsApp del Servicio, recolectamos:</p>
-<ul>
-  <li><strong>Número de teléfono</strong> y nombre de perfil de WhatsApp asociado a tu cuenta.</li>
-  <li><strong>Contenido de los mensajes</strong> que envías (texto).</li>
-  <li><strong>Archivos que adjuntas</strong> (imágenes, documentos, audios), cuando decides enviarlos
-    para tu declaración de renta (por ejemplo: certificados de ingresos, facturas, extractos
-    bancarios).</li>
-  <li>Metadatos técnicos de la conversación (marca de tiempo, identificador del mensaje).</li>
-</ul>
-<p>
-  No solicitamos ni recolectamos contraseñas, datos de tarjetas de pago, ni datos sensibles
-  adicionales a través de WhatsApp.
-</p>
+<main class="doc">
 
-<h2>2. Finalidad del tratamiento</h2>
-<p>Usamos estos datos para:</p>
-<ul>
-  <li>Responder tus mensajes de forma automatizada mediante un asistente de inteligencia artificial.</li>
-  <li>Recibir y clasificar los documentos que envíes, asociándolos a tu declaración de renta dentro de
-    la plataforma DeclaracionDian, para que tu contador asignado pueda revisarlos.</li>
-  <li>Mantener un historial de la conversación para dar continuidad al servicio.</li>
-</ul>
-<p>No usamos tus datos para publicidad ni los vendemos a terceros.</p>
+  <p class="intro">
+    <strong>BDSofware</strong> (portafolio comercial "Sofware libre"), es el responsable del tratamiento
+    de los datos personales recolectados a través del servicio de asistente de WhatsApp asociado a esta
+    aplicación ("el Servicio").
+  </p>
 
-<h2>3. Terceros que procesan datos en nuestro nombre</h2>
-<p>
-  Para prestar el Servicio, algunos datos pasan por los siguientes proveedores, bajo sus propias
-  condiciones de tratamiento de datos:
-</p>
-<ul>
-  <li><strong>Meta / WhatsApp Business Platform</strong>: transporte de los mensajes de WhatsApp.</li>
-  <li><strong>Anthropic</strong> (modelo de lenguaje Claude): procesamiento del texto del mensaje para
-    generar la respuesta automatizada.</li>
-  <li><strong>n8n</strong> (plataforma de automatización): orquesta el flujo de recepción y respuesta
-    de mensajes.</li>
-</ul>
+  <section>
+    <h2><span class="step-num">1</span>Datos que recolectamos</h2>
+    <p>Cuando escribes al número de WhatsApp del Servicio, recolectamos:</p>
+    <ul>
+      <li><strong>Número de teléfono</strong> y nombre de perfil de WhatsApp asociado a tu cuenta.</li>
+      <li><strong>Contenido de los mensajes</strong> que envías (texto).</li>
+      <li><strong>Archivos que adjuntas</strong> (imágenes, documentos, audios), cuando decides enviarlos
+        para tu declaración de renta (por ejemplo: certificados de ingresos, facturas, extractos
+        bancarios).</li>
+      <li>Metadatos técnicos de la conversación (marca de tiempo, identificador del mensaje).</li>
+    </ul>
+    <p>
+      No solicitamos ni recolectamos contraseñas, datos de tarjetas de pago, ni datos sensibles
+      adicionales a través de WhatsApp.
+    </p>
+  </section>
 
-<h2>4. Almacenamiento y seguridad</h2>
-<p>
-  Conservamos la información mientras exista una relación contractual vigente para la elaboración de
-  tu declaración de renta, o según lo exija la normativa tributaria aplicable.
-  <span class="pending">detalle de infraestructura de almacenamiento pendiente de confirmar</span>
-</p>
+  <section>
+    <h2><span class="step-num">2</span>Finalidad del tratamiento</h2>
+    <p>Usamos estos datos para:</p>
+    <ul>
+      <li>Responder tus mensajes de forma automatizada mediante un asistente de inteligencia artificial.</li>
+      <li>Recibir y clasificar los documentos que envíes, asociándolos a tu declaración de renta dentro de
+        la plataforma DeclaracionDian, para que tu contador asignado pueda revisarlos.</li>
+      <li>Mantener un historial de la conversación para dar continuidad al servicio.</li>
+    </ul>
+    <p>No usamos tus datos para publicidad ni los vendemos a terceros.</p>
+  </section>
 
-<h2>5. Tus derechos</h2>
-<p>
-  De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013 (Colombia), tienes derecho a conocer,
-  actualizar y rectificar tus datos personales; solicitar prueba de la autorización otorgada; ser
-  informado sobre el uso que se ha dado a tus datos; presentar quejas ante la Superintendencia de
-  Industria y Comercio; y revocar la autorización y/o solicitar la eliminación de tus datos, cuando no
-  exista un deber legal o contractual que impida su eliminación inmediata.
-</p>
-<p>Para ejercer estos derechos, escríbenos al correo de contacto indicado arriba.</p>
+  <section>
+    <h2><span class="step-num">3</span>Terceros que procesan datos en nuestro nombre</h2>
+    <p>
+      Para prestar el Servicio, algunos datos pasan por los siguientes proveedores, bajo sus propias
+      condiciones de tratamiento de datos:
+    </p>
+    <ul>
+      <li><strong>Meta / WhatsApp Business Platform</strong>: transporte de los mensajes de WhatsApp.</li>
+      <li><strong>Anthropic</strong> (modelo de lenguaje Claude): procesamiento del texto del mensaje para
+        generar la respuesta automatizada.</li>
+      <li><strong>n8n</strong> (plataforma de automatización): orquesta el flujo de recepción y respuesta
+        de mensajes.</li>
+    </ul>
+  </section>
 
-<h2>6. Cambios a esta política</h2>
-<p>
-  Podemos actualizar esta política ocasionalmente. Publicaremos cualquier cambio en esta misma URL,
-  indicando la fecha de la última actualización.
-</p>
+  <section>
+    <h2><span class="step-num">4</span>Almacenamiento y seguridad</h2>
+    <p>
+      Conservamos la información mientras exista una relación contractual vigente para la elaboración de
+      tu declaración de renta, o según lo exija la normativa tributaria aplicable.
+      <span class="pending">detalle de infraestructura de almacenamiento pendiente de confirmar</span>
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="step-num">5</span>Tus derechos</h2>
+    <p>
+      De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013 (Colombia), tienes derecho a conocer,
+      actualizar y rectificar tus datos personales; solicitar prueba de la autorización otorgada; ser
+      informado sobre el uso que se ha dado a tus datos; presentar quejas ante la Superintendencia de
+      Industria y Comercio; y revocar la autorización y/o solicitar la eliminación de tus datos, cuando no
+      exista un deber legal o contractual que impida su eliminación inmediata.
+    </p>
+    <div class="contact-card">
+      <p style="margin:0;">Para ejercer estos derechos, escríbenos al correo de contacto o por WhatsApp:</p>
+      <span class="pending">correo de contacto pendiente de confirmar</span>
+    </div>
+    <div class="contact-card" style="margin-top: 0.9rem;">
+      <p style="margin:0;">WhatsApp del Servicio:</p>
+      <a href="https://wa.me/573213210699" target="_blank" rel="noopener"><strong>+57 321 321 0699</strong></a>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="step-num">6</span>Cambios a esta política</h2>
+    <p>
+      Podemos actualizar esta política ocasionalmente. Publicaremos cualquier cambio en esta misma URL,
+      indicando la fecha de la última actualización.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container footer-bottom">
+    <span>© 2026 BDSofware — Sofware libre. Todos los derechos reservados.</span>
+    <span><a href="index.html">Volver al inicio</a></span>
+  </div>
+</footer>
+
+<a class="whatsapp-float" href="https://wa.me/573213210699?text=Hola%20BDSofware%2C%20tengo%20una%20pregunta%20sobre%20la%20pol%C3%ADtica%20de%20privacidad" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span aria-hidden="true">💬</span>
+  <span class="wa-label">WhatsApp</span>
+</a>
 
 </body>
 </html>
